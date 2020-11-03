@@ -303,7 +303,7 @@ body {
 
 .recipe {
   background-color: #F9F5F3;
-  border-top: 1px solid #fff; }
+border-top: 0px solid #fff; }
   .recipe__fig {
     height: 30rem;
     position: relative;
@@ -443,7 +443,8 @@ body {
   .shopping__list {
     list-style: none;
     max-height: 77rem;
-    overflow: scroll; }
+    /* overflow: scroll; } */
+    overflow: auto; }
   .shopping__item {
     display: flex;
     align-items: flex-start;

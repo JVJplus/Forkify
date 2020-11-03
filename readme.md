@@ -9,3 +9,8 @@ Based on the original project by [Jonas Schmedtmann](http://codingheroes.io/)'s 
 
 ## About
 This is a cookbook application that contains recipes for multiple different foods within categories. The user will then select the food he/she likes and the recipe view will be shown with much more details. The user will then be able to add the necessary ingredients to shopping cart.
+
+## To Add:
+
+* Add More Features : https://forkify-v2.netlify.app/
+* add hints like : try searching 'pizza, burger, chicken' auto changing animation!

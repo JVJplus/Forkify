@@ -1,3 +1,5 @@
+// https://www.taniarascia.com/how-to-use-webpack/
+
 const path = require("path");
 const HTMLWebpackPlugin = require("html-webpack-plugin");
 
@@ -26,5 +28,6 @@ module.exports = {
                 }
             }
         ]
-    }
+    },
+    devtool: "source-map"
 };
