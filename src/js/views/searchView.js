@@ -37,6 +37,41 @@ function fixInOneLine(str, maxChar = 17) {
     );
 }
 
+// type=='prev' or 'next'
+function createButton(type, page) {
+    return (
+    `
+    <button class="btn-inline results__btn--${type}" data-goto=${
+        type === "prev" ? page - 1 : page + 1
+    }>
+        <span>Page ${type === "prev" ? page - 1 : page + 1}</span>
+        <svg class="search__icon">
+            <use href="img/icons.svg#icon-triangle-${
+                type === "prev" ? "left" : "right"
+            }"></use>
+        </svg>
+    </button>
+    `);
+}
+
+function renderButtons(totalItems, pageNumber, itemsToShow) {
+    let buttons;
+    const totalPages = Math.ceil(totalItems / itemsToShow);
+
+    if (pageNumber == 1 && totalPages > 1)
+        buttons = createButton("next", pageNumber);
+    else if (pageNumber == totalPages && totalPages != 1) {
+        buttons = createButton("prev", pageNumber);
+    } else if(pageNumber<totalPages) {
+        buttons = `
+            ${createButton("prev", pageNumber)}
+            ${createButton("next", pageNumber)}
+        `;
+    }
+
+    base.elements.resultsPages.insertAdjacentHTML("afterbegin", buttons);
+}
+
 function addSingleItemToResult(item) {
     const child = `
             <li>
@@ -56,8 +91,17 @@ function addSingleItemToResult(item) {
     base.elements.resultsList.insertAdjacentHTML("beforeend", child);
 }
 
-export function addItemsToResults(data) {
-    data.forEach((item) => {
-        addSingleItemToResult(item);
-    });
+export function addItemsToResults(data, pageNumber = 1, itemsToShow = 10) {
+    const startingIndex = itemsToShow * (pageNumber - 1);
+    const endingIndex = itemsToShow * pageNumber;
+
+    data.slice(startingIndex, endingIndex).forEach(addSingleItemToResult);
+
+    // render pagination buttons
+    renderButtons(data.length, pageNumber, itemsToShow);
+}
+
+export function clearPreviousResults(){
+    base.elements.resultsList.innerHTML='';
+    base.elements.resultsPages.innerHTML='';
 }
