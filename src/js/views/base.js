@@ -7,5 +7,6 @@ export const elements={
     resultsPages:document.querySelector('.results__pages'),
     recipeView:document.querySelector('.recipe'),
     shopping:document.querySelector('.shopping__list'),
-    
+    likesMenu: document.querySelector('.likes__field'),
+    likesList:document.querySelector('.likes__list'),
 };

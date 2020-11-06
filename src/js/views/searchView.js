@@ -21,7 +21,7 @@ export function clearLoader() {
     }
 }
 
-function fixInOneLine(str, maxChar = 17) {
+export function fixInOneLine(str, maxChar = 17) {
     if (str.length <= 17) return str;
 
     return (
@@ -112,5 +112,10 @@ export const highlightSelected = id => {
     resultsArr.forEach(el => {
         el.classList.remove('results__link--active');
     });
-    document.querySelector(`.results__link[href*="${id}"]`).classList.add('results__link--active');
+    // if on same pagination else throw error
+    try{
+        document.querySelector(`.results__link[href*="${id}"]`).classList.add('results__link--active');
+    }catch(e){
+        // ignore!
+    }
 };
