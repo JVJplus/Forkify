@@ -491,3 +491,26 @@ border-top: 0px solid #fff; }
   .shopping__item:hover .shopping__delete {
     opacity: 1;
     visibility: visible; }
+
+.message {
+    max-width: 40rem;
+    margin: 0 auto;
+    padding: 5rem 4rem;
+    display: flex;
+}
+.message svg {
+    height: 3rem;
+    width: 3rem;
+    fill: #f38e82;
+    transform: translateY(-.3rem);
+}
+.message p {
+    margin-left: 1.5rem;
+    font-size: 1.8rem;
+    line-height: 1.5;
+    font-weight: 600;
+}
+.message a{
+  /* text-decoration: none; */
+  color: inherit;
+}

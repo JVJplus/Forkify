@@ -149,6 +149,19 @@ function handleLikes() {
 
 /* -------------------------------------------------------------------------- */
 function main() {
+    // on load
+    window.addEventListener('load',()=>{
+        state.likes=new likes.Likes();
+        // restore local storage likes
+        state.likes.restoreLocalStorage();
+
+        // render likes menu
+        likesView.toggleLikeMenu(state.likes.noOfLikes());
+
+        //render likes items
+        state.likes.likes.forEach(ele=>likesView.addItem(ele));
+    });
+    
     // add event listner
     base.elements.search.addEventListener("submit", handleSearch);
     window.addEventListener("hashchange", addRecipe);
@@ -159,18 +172,16 @@ function main() {
     // list view
     base.elements.shopping.addEventListener("click", handleListView);
 
-    // likes view
-    likesView.toggleLikeMenu(0); //hide in starting
 
-
-    testing();
+    // testing();
 }
 
+/* -------------------------------------------------------------------------- */
 main();
 
 /* --------------------------------- Testing -------------------------------- */
 function testing() {
     // base.elements.searchInput.value='pizza';
     // base.elements.searchBtn.click();
-    window.state = state;
+    // window.state = state;
 }

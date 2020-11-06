@@ -1,40 +1,49 @@
 <!DOCTYPE html>
 <html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+        <link
+            href="https://fonts.googleapis.com/css?family=Nunito+Sans:400,600,700"
+            rel="stylesheet"
+        />
+        <link rel="stylesheet" href="css/style.css" />
+        <link rel="shortcut icon" href="img/favicon.png" type="image/x-icon" />
+        <title>Forkify // Search over 10,00,000 recipes</title>
+    </head>
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link href="https://fonts.googleapis.com/css?family=Nunito+Sans:400,600,700" rel="stylesheet">
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="shortcut icon" href="img/favicon.png" type="image/x-icon">
-    <title>Forkify // Search over 10,00,000 recipes</title>
-</head>
-
-<body>
-    <div class="container">
-        <header class="header">
-            <a href="/">
-                <img src="img/logo.png" alt="Logo" class="header__logo">
-            </a>
-            <form class="search">
-                <input type="text" class="search__field" placeholder="Search over 10,00,000 recipes...">
-                <button class="btn search__btn">
-                    <svg class="search__icon">
-                        <use href="img/icons.svg#icon-magnifying-glass"></use>
-                    </svg>
-                    <span>Search</span>
-                </button>
-            </form>
-            <div class="likes">
-                <div class="likes__field">
-                    <svg class="likes__icon">
-                        <use href="img/icons.svg#icon-heart"></use>
-                    </svg>
-                </div>
-                <div class="likes__panel">
-                    <ul class="likes__list">
-                        <!--
+    <body>
+        <div class="container">
+            <header class="header">
+                <a href="/">
+                    <img src="img/logo.png" alt="Logo" class="header__logo" />
+                </a>
+                <form class="search">
+                    <input
+                        type="text"
+                        class="search__field"
+                        placeholder="Search over 10,00,000 recipes..."
+                    />
+                    <button class="btn search__btn">
+                        <svg class="search__icon">
+                            <use
+                                href="img/icons.svg#icon-magnifying-glass"
+                            ></use>
+                        </svg>
+                        <span>Search</span>
+                    </button>
+                </form>
+                <div class="likes">
+                    <div class="likes__field">
+                        <svg class="likes__icon">
+                            <use href="img/icons.svg#icon-heart"></use>
+                        </svg>
+                        <span>Likes</span>
+                    </div>
+                    <div class="likes__panel">
+                        <ul class="likes__list">
+                            <!--
                         <li>
                             <a class="likes__link" href="#23456">
                                 <figure class="likes__fig">
@@ -46,16 +55,14 @@
                                 </div>
                             </a>
                         </li>
-                        -->
-                    </ul>
+                        --></ul>
+                    </div>
                 </div>
-            </div>
-        </header>
+            </header>
 
-
-        <div class="results">
-            <ul class="results__list">
-                <!--
+            <div class="results">
+                <ul class="results__list">
+                    <!--
                 <li>
                     <a class="results__link results__link--active" href="#23456">
                         <figure class="results__fig">
@@ -174,11 +181,10 @@
                         </div>
                     </a>
                 </li>
-                -->
-            </ul>
+                --></ul>
 
-            <div class="results__pages">
-                <!--
+                <div class="results__pages">
+                    <!--
                 <button class="btn-inline results__btn--prev">
                     <svg class="search__icon">
                         <use href="img/icons.svg#icon-triangle-left"></use>
@@ -191,15 +197,36 @@
                         <use href="img/icons.svg#icon-triangle-right"></use>
                     </svg>
                 </button>
-                -->
+                --></div>
             </div>
-        </div>
 
+            <div class="recipe">
+                <div class="message">
+                    <div>
+                        <svg>
+                            <use href="img/smiley.svg#icon-smile"></use>
+                        </svg>
+                    </div>
+                    <p>
+                        Start by searching for a recipe or an ingredient. Have
+                        fun!
+                        <br>
+                        <br>
+                        Most searched for:
+                        <br>
+                        &bull; Cake <br>
+                        &bull; Pizza <br>
+                        &bull; Chicken <br>
+                        &bull; Ice Cream <br>
+                        &bull; Fish <br> 
+                        <br>
+                        See all available search queries: 
+                        <a target="_blank" href="https://forkify-api.herokuapp.com/phrases.html">here</a>
 
+                    </p>
+                </div>
 
-        <div class="recipe">
-
-            <!--
+                <!--
             <figure class="recipe__fig">
                 <img src="img/test-1.jpg" alt="Tomato" class="recipe__img">
                 <h1 class="recipe__title">
@@ -336,19 +363,13 @@
 
                 </a>
             </div>
-            -->
-        </div>
+            --></div>
 
+            <div class="shopping">
+                <h2 class="heading-2">My Shopping List</h2>
 
-
-
-
-        <div class="shopping">
-            <h2 class="heading-2">My Shopping List</h2>
-
-            <ul class="shopping__list">
-
-                <!--
+                <ul class="shopping__list">
+                    <!--
                 <li class="shopping__item">
                     <div class="shopping__count">
                         <input type="number" value="500" step="100">
@@ -427,18 +448,18 @@
                         </svg>
                     </button>
                 </li>
-                -->
-            </ul>
+                --></ul>
 
-            <div class="copyright">
-                &copy; by Jayprakash.
-                Powered by
-                <a href="https://forkify-api.herokuapp.com/" target="_blank" class="link">Forkify API</a>.
+                <div class="copyright">
+                    &copy; by Jayprakash. Powered by
+                    <a
+                        href="https://forkify-api.herokuapp.com/"
+                        target="_blank"
+                        class="link"
+                        >Forkify API</a
+                    >.
+                </div>
             </div>
-
         </div>
-    </div>
-
-</body>
-
+    </body>
 </html>

@@ -14,3 +14,5 @@ This is a cookbook application that contains recipes for multiple different food
 
 * Add More Features : https://forkify-v2.netlify.app/
 * add hints like : try searching 'pizza, burger, chicken' auto changing animation!
+* change like to bookmark
+* make option to add recipe using own api!

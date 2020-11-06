@@ -14,7 +14,7 @@ export class Search {
             return this.recipes;
         } 
         catch (err) {
-            alert(`No data available for this query.\nTry: 'pizza', 'chicken' etc`)
+            alert(`No data available for this query.\nTry: 'cake', 'pizza' etc\n\nSee all available queries options.`)
         }
     }
 }
