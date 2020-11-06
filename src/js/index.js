@@ -42,7 +42,6 @@ async function handleSearchDatas(input) {
         // if invalid query as per API
         return;
     }
-    console.log(recipes);
 
     // add items in dom
     searchView.addItemsToResults(recipes);
