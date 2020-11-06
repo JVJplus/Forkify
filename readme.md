@@ -16,3 +16,6 @@ This is a cookbook application that contains recipes for multiple different food
 * add hints like : try searching 'pizza, burger, chicken' auto changing animation!
 * change like to bookmark
 * make option to add recipe using own api!
+* add delete all list items btn
+* add selective ingredients to list from recipe
+* add another index in homepage

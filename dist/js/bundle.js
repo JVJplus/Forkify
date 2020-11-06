@@ -12220,6 +12220,384 @@ module.exports = __webpack_require__(/*! ./modules/_core */ "./node_modules/core
 
 /***/ }),
 
+/***/ "./node_modules/fractional/index.js":
+/*!******************************************!*\
+  !*** ./node_modules/fractional/index.js ***!
+  \******************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+/*
+fraction.js
+A Javascript fraction library.
+
+Copyright (c) 2009  Erik Garrison <erik@hypervolu.me>
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+
+*/
+
+
+/* Fractions */
+/* 
+ *
+ * Fraction objects are comprised of a numerator and a denomenator.  These
+ * values can be accessed at fraction.numerator and fraction.denomenator.
+ *
+ * Fractions are always returned and stored in lowest-form normalized format.
+ * This is accomplished via Fraction.normalize.
+ *
+ * The following mathematical operations on fractions are supported:
+ *
+ * Fraction.equals
+ * Fraction.add
+ * Fraction.subtract
+ * Fraction.multiply
+ * Fraction.divide
+ *
+ * These operations accept both numbers and fraction objects.  (Best results
+ * are guaranteed when the input is a fraction object.)  They all return a new
+ * Fraction object.
+ *
+ * Usage:
+ *
+ * TODO
+ *
+ */
+
+/*
+ * The Fraction constructor takes one of:
+ *   an explicit numerator (integer) and denominator (integer),
+ *   a string representation of the fraction (string),
+ *   or a floating-point number (float)
+ *
+ * These initialization methods are provided for convenience.  Because of
+ * rounding issues the best results will be given when the fraction is
+ * constructed from an explicit integer numerator and denomenator, and not a
+ * decimal number.
+ *
+ *
+ * e.g. new Fraction(1, 2) --> 1/2
+ *      new Fraction('1/2') --> 1/2
+ *      new Fraction('2 3/4') --> 11/4  (prints as 2 3/4)
+ *
+ */
+Fraction = function(numerator, denominator)
+{
+    /* double argument invocation */
+    if (typeof numerator !== 'undefined' && denominator) {
+        if (typeof(numerator) === 'number' && typeof(denominator) === 'number') {
+            this.numerator = numerator;
+            this.denominator = denominator;
+        } else if (typeof(numerator) === 'string' && typeof(denominator) === 'string') {
+            // what are they?
+            // hmm....
+            // assume they are ints?
+            this.numerator = parseInt(numerator);
+            this.denominator = parseInt(denominator);
+        }
+    /* single-argument invocation */
+    } else if (typeof denominator === 'undefined') {
+        num = numerator; // swap variable names for legibility
+        if (typeof(num) === 'number') {  // just a straight number init
+            this.numerator = num;
+            this.denominator = 1;
+        } else if (typeof(num) === 'string') {
+            var a, b;  // hold the first and second part of the fraction, e.g. a = '1' and b = '2/3' in 1 2/3
+                       // or a = '2/3' and b = undefined if we are just passed a single-part number
+            var arr = num.split(' ')
+            if (arr[0]) a = arr[0]
+            if (arr[1]) b = arr[1]
+            /* compound fraction e.g. 'A B/C' */
+            //  if a is an integer ...
+            if (a % 1 === 0 && b && b.match('/')) {
+                return (new Fraction(a)).add(new Fraction(b));
+            } else if (a && !b) {
+                /* simple fraction e.g. 'A/B' */
+                if (typeof(a) === 'string' && a.match('/')) {
+                    // it's not a whole number... it's actually a fraction without a whole part written
+                    var f = a.split('/');
+                    this.numerator = f[0]; this.denominator = f[1];
+                /* string floating point */
+                } else if (typeof(a) === 'string' && a.match('\.')) {
+                    return new Fraction(parseFloat(a));
+                /* whole number e.g. 'A' */
+                } else { // just passed a whole number as a string
+                    this.numerator = parseInt(a);
+                    this.denominator = 1;
+                }
+            } else {
+                return undefined; // could not parse
+            }
+        }
+    }
+    this.normalize();
+}
+
+
+Fraction.prototype.clone = function()
+{
+    return new Fraction(this.numerator, this.denominator);
+}
+
+
+/* pretty-printer, converts fractions into whole numbers and fractions */
+Fraction.prototype.toString = function()
+{
+    if (this.denominator==='NaN') return 'NaN'
+    var wholepart = (this.numerator/this.denominator>0) ?
+      Math.floor(this.numerator / this.denominator) :
+      Math.ceil(this.numerator / this.denominator)
+    var numerator = this.numerator % this.denominator 
+    var denominator = this.denominator;
+    var result = []; 
+    if (wholepart != 0)  
+        result.push(wholepart);
+    if (numerator != 0)  
+        result.push(((wholepart===0) ? numerator : Math.abs(numerator)) + '/' + denominator);
+    return result.length > 0 ? result.join(' ') : 0;
+}
+
+
+/* destructively rescale the fraction by some integral factor */
+Fraction.prototype.rescale = function(factor)
+{
+    this.numerator *= factor;
+    this.denominator *= factor;
+    return this;
+}
+
+
+Fraction.prototype.add = function(b)
+{
+    var a = this.clone();
+    if (b instanceof Fraction) {
+        b = b.clone();
+    } else {
+        b = new Fraction(b);
+    }
+    td = a.denominator;
+    a.rescale(b.denominator);
+    b.rescale(td);
+
+    a.numerator += b.numerator;
+
+    return a.normalize();
+}
+
+
+Fraction.prototype.subtract = function(b)
+{
+    var a = this.clone();
+    if (b instanceof Fraction) {
+        b = b.clone();  // we scale our argument destructively, so clone
+    } else {
+        b = new Fraction(b);
+    }
+    td = a.denominator;
+    a.rescale(b.denominator);
+    b.rescale(td);
+
+    a.numerator -= b.numerator;
+
+    return a.normalize();
+}
+
+
+Fraction.prototype.multiply = function(b)
+{
+    var a = this.clone();
+    if (b instanceof Fraction)
+    {
+        a.numerator *= b.numerator;
+        a.denominator *= b.denominator;
+    } else if (typeof b === 'number') {
+        a.numerator *= b;
+    } else {
+        return a.multiply(new Fraction(b));
+    }
+    return a.normalize();
+}
+
+Fraction.prototype.divide = function(b)
+{
+    var a = this.clone();
+    if (b instanceof Fraction)
+    {
+        a.numerator *= b.denominator;
+        a.denominator *= b.numerator;
+    } else if (typeof b === 'number') {
+        a.denominator *= b;
+    } else {
+        return a.divide(new Fraction(b));
+    }
+    return a.normalize();
+}
+
+Fraction.prototype.equals = function(b)
+{
+    if (!(b instanceof Fraction)) {
+        b = new Fraction(b);
+    }
+    // fractions that are equal should have equal normalized forms
+    var a = this.clone().normalize();
+    var b = b.clone().normalize();
+    return (a.numerator === b.numerator && a.denominator === b.denominator);
+}
+
+
+/* Utility functions */
+
+/* Destructively normalize the fraction to its smallest representation. 
+ * e.g. 4/16 -> 1/4, 14/28 -> 1/2, etc.
+ * This is called after all math ops.
+ */
+Fraction.prototype.normalize = (function()
+{
+
+    var isFloat = function(n)
+    {
+        return (typeof(n) === 'number' && 
+                ((n > 0 && n % 1 > 0 && n % 1 < 1) || 
+                 (n < 0 && n % -1 < 0 && n % -1 > -1))
+               );
+    }
+
+    var roundToPlaces = function(n, places) 
+    {
+        if (!places) {
+            return Math.round(n);
+        } else {
+            var scalar = Math.pow(10, places);
+            return Math.round(n*scalar)/scalar;
+        }
+    }
+        
+    return (function() {
+
+        // XXX hackish.  Is there a better way to address this issue?
+        //
+        /* first check if we have decimals, and if we do eliminate them
+         * multiply by the 10 ^ number of decimal places in the number
+         * round the number to nine decimal places
+         * to avoid js floating point funnies
+         */
+        if (isFloat(this.denominator)) {
+            var rounded = roundToPlaces(this.denominator, 9);
+            var scaleup = Math.pow(10, rounded.toString().split('.')[1].length);
+            this.denominator = Math.round(this.denominator * scaleup); // this !!! should be a whole number
+            //this.numerator *= scaleup;
+            this.numerator *= scaleup;
+        } 
+        if (isFloat(this.numerator)) {
+            var rounded = roundToPlaces(this.numerator, 9);
+            var scaleup = Math.pow(10, rounded.toString().split('.')[1].length);
+            this.numerator = Math.round(this.numerator * scaleup); // this !!! should be a whole number
+            //this.numerator *= scaleup;
+            this.denominator *= scaleup;
+        }
+        var gcf = Fraction.gcf(this.numerator, this.denominator);
+        this.numerator /= gcf;
+        this.denominator /= gcf;
+        if ((this.numerator < 0 && this.denominator < 0) || (this.numerator > 0 && this.denominator < 0)) {
+            this.numerator *= -1;
+            this.denominator *= -1;
+        }
+        return this;
+    });
+
+})();
+
+
+/* Takes two numbers and returns their greatest common factor.
+ */
+Fraction.gcf = function(a, b)
+{
+
+    var common_factors = [];
+    var fa = Fraction.primeFactors(a);
+    var fb = Fraction.primeFactors(b);
+    // for each factor in fa
+    // if it's also in fb
+    // put it into the common factors
+    fa.forEach(function (factor) 
+    { 
+        var i = fb.indexOf(factor);
+        if (i >= 0) {
+            common_factors.push(factor);
+            fb.splice(i,1); // remove from fb
+        }
+    });
+
+    if (common_factors.length === 0)
+        return 1;
+
+    var gcf = (function() {
+        var r = common_factors[0];
+        var i;
+        for (i=1;i<common_factors.length;i++)
+        {
+            r = r * common_factors[i];
+        }
+        return r;
+    })();
+
+    return gcf;
+
+};
+
+
+// Adapted from: 
+// http://www.btinternet.com/~se16/js/factor.htm
+Fraction.primeFactors = function(n) 
+{
+
+    var num = Math.abs(n);
+    var factors = [];
+    var _factor = 2;  // first potential prime factor
+
+    while (_factor * _factor <= num)  // should we keep looking for factors?
+    {      
+      if (num % _factor === 0)  // this is a factor
+        { 
+            factors.push(_factor);  // so keep it
+            num = num/_factor;  // and divide our search point by it
+        }
+        else
+        {
+            _factor++;  // and increment
+        }
+    }
+
+    if (num != 1)                    // If there is anything left at the end...
+    {                                // ...this must be the last prime factor
+        factors.push(num);           //    so it too should be recorded
+    }
+
+    return factors;                  // Return the prime factors
+}
+
+module.exports.Fraction = Fraction
+
+
+/***/ }),
+
 /***/ "./node_modules/process/browser.js":
 /*!*****************************************!*\
   !*** ./node_modules/process/browser.js ***!
@@ -13163,6 +13541,48 @@ process.umask = function() { return 0; };
 
 /***/ }),
 
+/***/ "./node_modules/uniqid/index.js":
+/*!**************************************!*\
+  !*** ./node_modules/uniqid/index.js ***!
+  \**************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+/* WEBPACK VAR INJECTION */(function(process) {/* 
+(The MIT License)
+Copyright (c) 2014-2019 Halász Ádám <mail@adamhalasz.com>
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+*/
+
+//  Unique Hexatridecimal ID Generator
+// ================================================
+
+//  Dependencies
+// ================================================
+var pid = process && process.pid ? process.pid.toString(36) : '' ;
+var address = '';
+if(false){ var i, mac, networkInterfaces; } 
+
+//  Exports
+// ================================================
+module.exports = module.exports.default = function(prefix, suffix){ return (prefix ? prefix : '') + address + pid + now().toString(36) + (suffix ? suffix : ''); }
+module.exports.process = function(prefix, suffix){ return (prefix ? prefix : '') + pid + now().toString(36) + (suffix ? suffix : ''); }
+module.exports.time    = function(prefix, suffix){ return (prefix ? prefix : '') + now().toString(36) + (suffix ? suffix : ''); }
+
+//  Helpers
+// ================================================
+function now(){
+    var time = Date.now();
+    var last = now.last || time;
+    return now.last = time > last ? time : last + 1;
+}
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../process/browser.js */ "./node_modules/process/browser.js")))
+
+/***/ }),
+
 /***/ "./node_modules/webpack/buildin/global.js":
 /*!***********************************!*\
   !*** (webpack)/buildin/global.js ***!
@@ -13206,7 +13626,7 @@ module.exports = g;
 
 var handleSearchDatas = function () {
     var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(input) {
-        var Search, recipes;
+        var recipes;
         return regeneratorRuntime.wrap(function _callee$(_context) {
             while (1) {
                 switch (_context.prev = _context.next) {
@@ -13215,23 +13635,31 @@ var handleSearchDatas = function () {
 
                         searchView.showLoader(base.elements.results);
 
-                        Search = new search.Search(input);
+                        state.search = new search.Search(input);
                         _context.next = 4;
-                        return Search.getData();
+                        return state.search.getData();
 
                     case 4:
                         recipes = _context.sent;
 
-                        console.log(recipes);
-
-                        // remove loader 
+                        // remove loader
                         searchView.clearLoader();
+
+                        if (recipes) {
+                            _context.next = 8;
+                            break;
+                        }
+
+                        return _context.abrupt("return");
+
+                    case 8:
 
                         // add items in dom
                         searchView.addItemsToResults(recipes);
+                        handlePaginationButtons(recipes);
 
-                    case 8:
-                    case 'end':
+                    case 10:
+                    case "end":
                         return _context.stop();
                 }
             }
@@ -13243,9 +13671,74 @@ var handleSearchDatas = function () {
     };
 }();
 
+/* -------------------------------------------------------------------------- */
+/*                              RECIPE CONTROLLER                             */
+/* -------------------------------------------------------------------------- */
+
+var addRecipe = function () {
+    var _ref2 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2(e) {
+        var hash;
+        return regeneratorRuntime.wrap(function _callee2$(_context2) {
+            while (1) {
+                switch (_context2.prev = _context2.next) {
+                    case 0:
+                        // add reciepes on dom
+                        hash = location.hash.replace("#", "");
+
+                        if (!hash) {
+                            _context2.next = 11;
+                            break;
+                        }
+
+                        // clear previous
+                        recipeView.clearRecipe();
+                        _context2.next = 5;
+                        return state.search;
+
+                    case 5:
+                        if (!_context2.sent) {
+                            _context2.next = 7;
+                            break;
+                        }
+
+                        searchView.highlightSelected(hash);
+
+                    case 7:
+                        state.recipe = new recipe.Recipe(hash);
+                        _context2.next = 10;
+                        return state.recipe.getRecipe();
+
+                    case 10:
+                        recipeView.renderRecipe(state.recipe, state.likes ? state.likes.isLiked(hash) : 0);
+
+                    case 11:
+                    case "end":
+                        return _context2.stop();
+                }
+            }
+        }, _callee2, this);
+    }));
+
+    return function addRecipe(_x2) {
+        return _ref2.apply(this, arguments);
+    };
+}();
+
 var _searchView = __webpack_require__(/*! ./views/searchView */ "./src/js/views/searchView.js");
 
 var searchView = _interopRequireWildcard(_searchView);
+
+var _recipeView = __webpack_require__(/*! ./views/recipeView */ "./src/js/views/recipeView.js");
+
+var recipeView = _interopRequireWildcard(_recipeView);
+
+var _likesView = __webpack_require__(/*! ./views/likesView */ "./src/js/views/likesView.js");
+
+var likesView = _interopRequireWildcard(_likesView);
+
+var _listView = __webpack_require__(/*! ./views/listView */ "./src/js/views/listView.js");
+
+var listView = _interopRequireWildcard(_listView);
 
 var _base = __webpack_require__(/*! ./views/base */ "./src/js/views/base.js");
 
@@ -13255,9 +13748,41 @@ var _search = __webpack_require__(/*! ./models/search */ "./src/js/models/search
 
 var search = _interopRequireWildcard(_search);
 
+var _recipe = __webpack_require__(/*! ./models/recipe */ "./src/js/models/recipe.js");
+
+var recipe = _interopRequireWildcard(_recipe);
+
+var _list = __webpack_require__(/*! ./models/list */ "./src/js/models/list.js");
+
+var list = _interopRequireWildcard(_list);
+
+var _likes = __webpack_require__(/*! ./models/likes */ "./src/js/models/likes.js");
+
+var likes = _interopRequireWildcard(_likes);
+
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
+
+var state = {};
+
+/* -------------------------------------------------------------------------- */
+/*                              SEARCH CONTROLLER                             */
+/* -------------------------------------------------------------------------- */
+
+function handlePaginationButtons(recipes) {
+    // dynamic content select karise kare? using event deligation
+    base.elements.resultsPages.addEventListener("click", function (e) {
+        // multiple elements pe event kaise dale? using closest method
+        var btn = e.target.closest(".btn-inline");
+        // if its on dom
+        if (btn) {
+            searchView.clearPreviousResults();
+            var goToPage = parseInt(btn.dataset.goto);
+            searchView.addItemsToResults(recipes, goToPage);
+        }
+    });
+}
 
 function handleSearch(e) {
     // prevent get method!
@@ -13266,18 +13791,436 @@ function handleSearch(e) {
 
     if (input) {
         // remove current input
-        base.elements.searchInput.value = '';
+        base.elements.searchInput.value = "";
+        searchView.clearPreviousResults();
         // fetch data and process
         handleSearchDatas(input);
     }
 }
 
-function main() {
-    // add event listner
-    base.elements.search.addEventListener('submit', handleSearch);
+function handleRecipe(e) {
+    if (e.target.matches(".btn-decrease, .btn-decrease *")) {
+        // Decrease button is clicked
+        if (state.recipe.servings > 1) {
+            state.recipe.updateServings("dec");
+            recipeView.updateServingsIngredients(state.recipe);
+        }
+    } else if (e.target.matches(".btn-increase, .btn-increase *")) {
+        // Increase button is clicked
+        state.recipe.updateServings("inc");
+        recipeView.updateServingsIngredients(state.recipe);
+    } else if (e.target.matches(".recipe__btn--add, .recipe__btn--add *")) {
+        // Add To Recipe
+        if (!state.list) state.list = new list.List();
+        state.recipe.ingredients.forEach(function (el) {
+            var item = state.list.addItem(el);
+            listView.addItem(item);
+        });
+    } else if (e.target.closest('.recipe__love')) {
+        // control likes
+        handleLikes();
+    }
 }
 
+/* -------------------------------------------------------------------------- */
+/*                               List Controller                              */
+/* -------------------------------------------------------------------------- */
+function handleListView(e) {
+    var id = e.target.closest(".shopping__item").dataset.itemid;
+    if (e.target.closest(".shopping__delete")) {
+        // Delte List Item
+        listView.deleteItem(id);
+        state.list.deleteItem(id);
+    } else if (e.target.matches(".shopping__count-value")) {
+        // Change Count Value
+        var val = parseFloat(e.target.value, 10);
+        state.list.updateCount(id, val);
+    }
+}
+
+/* -------------------------------------------------------------------------- */
+/*                              Likes Controller                              */
+/* -------------------------------------------------------------------------- */
+
+function handleLikes() {
+    var id = state.recipe.id;
+    if (!state.likes) state.likes = new likes.Likes();
+
+    if (!state.likes.isLiked(id)) {
+        // Add Like 
+        var ele = state.likes.addItem(id, state.recipe.img, state.recipe.title, state.recipe.author);
+        likesView.toggleLikeBtn(true);
+        likesView.addItem(ele);
+    } else {
+        // Remove Like
+        state.likes.removeItem(id);
+        likesView.toggleLikeBtn(false);
+        likesView.removeItem(id);
+    }
+
+    likesView.toggleLikeMenu(state.likes.noOfLikes());
+}
+
+/* -------------------------------------------------------------------------- */
+function main() {
+    // on load
+    window.addEventListener('load', function () {
+        state.likes = new likes.Likes();
+        // restore local storage likes
+        state.likes.restoreLocalStorage();
+
+        // render likes menu
+        likesView.toggleLikeMenu(state.likes.noOfLikes());
+
+        //render likes items
+        state.likes.likes.forEach(function (ele) {
+            return likesView.addItem(ele);
+        });
+    });
+
+    // add event listner
+    base.elements.search.addEventListener("submit", handleSearch);
+    window.addEventListener("hashchange", addRecipe);
+    window.addEventListener("load", addRecipe);
+    // serving buttons
+    base.elements.recipeView.addEventListener("click", handleRecipe);
+
+    // list view
+    base.elements.shopping.addEventListener("click", handleListView);
+
+    // testing();
+}
+
+/* -------------------------------------------------------------------------- */
 main();
+
+/* --------------------------------- Testing -------------------------------- */
+function testing() {
+    // base.elements.searchInput.value='pizza';
+    // base.elements.searchBtn.click();
+    // window.state = state;
+}
+
+/***/ }),
+
+/***/ "./src/js/models/likes.js":
+/*!********************************!*\
+  !*** ./src/js/models/likes.js ***!
+  \********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Likes = exports.Likes = function () {
+    function Likes() {
+        _classCallCheck(this, Likes);
+
+        this.likes = [];
+    }
+
+    _createClass(Likes, [{
+        key: 'addItem',
+        value: function addItem(id, img, title, author) {
+            this.likes.push({
+                id: id, img: img, title: title, author: author
+            });
+            this.addToLocalStorage();
+            return this.likes[this.likes.length - 1];
+        }
+    }, {
+        key: 'removeItem',
+        value: function removeItem(id) {
+            var index = this.likes.findIndex(function (el) {
+                return el.id == id;
+            });
+            this.likes.splice(index, 1);
+            this.addToLocalStorage();
+        }
+    }, {
+        key: 'isLiked',
+        value: function isLiked(id) {
+            return this.likes.findIndex(function (el) {
+                return el.id == id;
+            }) != -1;
+        }
+    }, {
+        key: 'noOfLikes',
+        value: function noOfLikes() {
+            return this.likes.length;
+        }
+    }, {
+        key: 'addToLocalStorage',
+        value: function addToLocalStorage() {
+            localStorage.setItem('likes', JSON.stringify(this.likes));
+        }
+    }, {
+        key: 'restoreLocalStorage',
+        value: function restoreLocalStorage() {
+            // can be null, if not empty or 1st time
+            var oldLikes = JSON.parse(localStorage.getItem('likes'));
+            if (oldLikes) this.likes = oldLikes;
+        }
+    }]);
+
+    return Likes;
+}();
+
+/***/ }),
+
+/***/ "./src/js/models/list.js":
+/*!*******************************!*\
+  !*** ./src/js/models/list.js ***!
+  \*******************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.List = undefined;
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _uniqid = __webpack_require__(/*! uniqid */ "./node_modules/uniqid/index.js");
+
+var _uniqid2 = _interopRequireDefault(_uniqid);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var List = exports.List = function () {
+    function List() {
+        _classCallCheck(this, List);
+
+        this.items = [];
+    }
+
+    _createClass(List, [{
+        key: 'addItem',
+        value: function addItem(obj) {
+            var id = (0, _uniqid2.default)();
+            this.items.push({
+                id: id,
+                count: obj.count,
+                unit: obj.unit,
+                ingredient: obj.ingredient
+            });
+            return this.items[this.items.length - 1];
+        }
+    }, {
+        key: 'deleteItem',
+        value: function deleteItem(id) {
+            var index = this.items.findIndex(function (el) {
+                return el.id == id;
+            });
+            this.items.splice(index, 1);
+        }
+    }, {
+        key: 'updateCount',
+        value: function updateCount(id, newCount) {
+            this.items.find(function (el) {
+                return el.id == id;
+            }).count = newCount;
+        }
+    }]);
+
+    return List;
+}();
+
+/***/ }),
+
+/***/ "./src/js/models/recipe.js":
+/*!*********************************!*\
+  !*** ./src/js/models/recipe.js ***!
+  \*********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.Recipe = undefined;
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _axios = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
+
+var _axios2 = _interopRequireDefault(_axios);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Recipe = exports.Recipe = function () {
+    function Recipe(id) {
+        _classCallCheck(this, Recipe);
+
+        this.id = id;
+    }
+
+    _createClass(Recipe, [{
+        key: "getRecipe",
+        value: function () {
+            var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
+                var url, data;
+                return regeneratorRuntime.wrap(function _callee$(_context) {
+                    while (1) {
+                        switch (_context.prev = _context.next) {
+                            case 0:
+                                _context.prev = 0;
+                                url = "https://forkify-api.herokuapp.com/api/get?rId=" + this.id;
+                                _context.next = 4;
+                                return (0, _axios2.default)(url);
+
+                            case 4:
+                                data = _context.sent;
+
+                                this.recipe = data.data.recipe;
+                                this.title = this.recipe.title;
+                                this.author = this.recipe.publisher;
+                                this.img = this.recipe.image_url;
+                                this.url = this.recipe.source_url;
+                                this.ingredients = this.recipe.ingredients;
+                                this.calcTime();
+                                this.calcServings();
+                                this.parseIngredients();
+                                _context.next = 20;
+                                break;
+
+                            case 16:
+                                _context.prev = 16;
+                                _context.t0 = _context["catch"](0);
+
+                                console.log(_context.t0);
+                                alert("Something went wrong :(");
+
+                            case 20:
+                            case "end":
+                                return _context.stop();
+                        }
+                    }
+                }, _callee, this, [[0, 16]]);
+            }));
+
+            function getRecipe() {
+                return _ref.apply(this, arguments);
+            }
+
+            return getRecipe;
+        }()
+    }, {
+        key: "calcTime",
+        value: function calcTime() {
+            // Assuming that we need 15 min for each 3 ingredients
+            var numIng = this.ingredients.length;
+            var periods = Math.ceil(numIng / 3);
+            this.time = periods * 15;
+        }
+    }, {
+        key: "calcServings",
+        value: function calcServings() {
+            this.servings = 4;
+        }
+    }, {
+        key: "parseIngredients",
+        value: function parseIngredients() {
+            var unitsLong = ['tablespoons', 'tablespoon', 'ounces', 'ounce', 'teaspoons', 'teaspoon', 'cups', 'pounds'];
+            var unitsShort = ['tbsp', 'tbsp', 'oz', 'oz', 'tsp', 'tsp', 'cup', 'pound'];
+            var units = [].concat(unitsShort, ['kg', 'g']);
+
+            var newIngredients = this.ingredients.map(function (el) {
+                // 1) Uniform units
+                var ingredient = el.toLowerCase();
+                unitsLong.forEach(function (unit, i) {
+                    ingredient = ingredient.replace(unit, unitsShort[i]);
+                });
+
+                // 2) Remove parentheses
+                ingredient = ingredient.replace(/ *\([^)]*\) */g, ' ');
+
+                // 3) Parse ingredients into count, unit and ingredient
+                var arrIng = ingredient.split(' ');
+                var unitIndex = arrIng.findIndex(function (el2) {
+                    return units.includes(el2);
+                });
+
+                var objIng = void 0;
+                if (unitIndex > -1) {
+                    // There is a unit
+                    // Ex. 4 1/2 cups, arrCount is [4, 1/2] --> eval("4+1/2") --> 4.5
+                    // Ex. 4 cups, arrCount is [4]
+                    var arrCount = arrIng.slice(0, unitIndex);
+
+                    var count = void 0;
+                    if (arrCount.length === 1) {
+                        count = eval(arrIng[0].replace('-', '+'));
+                    } else {
+                        count = eval(arrIng.slice(0, unitIndex).join('+'));
+                    }
+
+                    objIng = {
+                        count: count,
+                        unit: arrIng[unitIndex],
+                        ingredient: arrIng.slice(unitIndex + 1).join(' ')
+                    };
+                } else if (parseInt(arrIng[0], 10)) {
+                    // There is NO unit, but 1st element is number
+                    objIng = {
+                        count: parseInt(arrIng[0], 10),
+                        unit: '',
+                        ingredient: arrIng.slice(1).join(' ')
+                    };
+                } else if (unitIndex === -1) {
+                    // There is NO unit and NO number in 1st position
+                    objIng = {
+                        count: 1,
+                        unit: '',
+                        ingredient: ingredient
+                    };
+                }
+
+                return objIng;
+            });
+            this.ingredients = newIngredients;
+        }
+    }, {
+        key: "updateServings",
+        value: function updateServings(type) {
+            var _this = this;
+
+            // Servings
+            var newServings = type === 'dec' ? this.servings - 1 : this.servings + 1;
+
+            // Ingredients
+            this.ingredients.forEach(function (ing) {
+                ing.count *= newServings / _this.servings;
+            });
+
+            this.servings = newServings;
+        }
+    }]);
+
+    return Recipe;
+}();
 
 /***/ }),
 
@@ -13337,7 +14280,7 @@ var Search = exports.Search = function () {
                                 _context.prev = 11;
                                 _context.t0 = _context["catch"](0);
 
-                                console.log("Some Error!", _context.t0);
+                                alert("No data available for this query.\nTry: 'cake', 'pizza' etc\n\nSee all available queries options.");
 
                             case 14:
                             case "end":
@@ -13375,11 +14318,174 @@ Object.defineProperty(exports, "__esModule", {
 });
 var elements = exports.elements = {
     searchInput: document.querySelector('.search__field'),
+    searchBtn: document.querySelector('.search__btn'),
     search: document.querySelector('.search'),
     results: document.querySelector('.results'),
     resultsList: document.querySelector('.results__list'),
-    resultsPages: document.querySelector('.results__pages')
+    resultsPages: document.querySelector('.results__pages'),
+    recipeView: document.querySelector('.recipe'),
+    shopping: document.querySelector('.shopping__list'),
+    likesMenu: document.querySelector('.likes__field'),
+    likesList: document.querySelector('.likes__list')
+};
 
+/***/ }),
+
+/***/ "./src/js/views/likesView.js":
+/*!***********************************!*\
+  !*** ./src/js/views/likesView.js ***!
+  \***********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.toggleLikeMenu = exports.toggleLikeBtn = exports.removeItem = undefined;
+exports.addItem = addItem;
+
+var _base = __webpack_require__(/*! ./base */ "./src/js/views/base.js");
+
+var base = _interopRequireWildcard(_base);
+
+var _searchView = __webpack_require__(/*! ./searchView */ "./src/js/views/searchView.js");
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+function addItem(like) {
+    var markup = '\n        <li>\n            <a class="likes__link" href="#' + like.id + '">\n                <figure class="likes__fig">\n                    <img src="' + like.img + '" alt="' + like.title + '">\n                </figure>\n                <div class="likes__data">\n                    <h4 class="likes__name">' + (0, _searchView.fixInOneLine)(like.title) + '</h4>\n                    <p class="likes__author">' + like.author + '</p>\n                </div>\n            </a>\n        </li>\n    ';
+    base.elements.likesList.insertAdjacentHTML('beforeend', markup);
+}
+
+var removeItem = exports.removeItem = function removeItem(id) {
+    var el = document.querySelector('.likes__link[href*="' + id + '"]').parentElement;
+    el.parentElement.removeChild(el);
+};
+
+var toggleLikeBtn = exports.toggleLikeBtn = function toggleLikeBtn(isLiked) {
+    var iconString = isLiked ? 'icon-heart' : 'icon-heart-outlined';
+    document.querySelector('.recipe__love use').setAttribute('href', 'img/icons.svg#' + iconString);
+    // icons.svg#icon-heart-outlined
+};
+
+var toggleLikeMenu = exports.toggleLikeMenu = function toggleLikeMenu(numLikes) {
+    base.elements.likesMenu.style.visibility = numLikes > 0 ? 'visible' : 'hidden';
+};
+
+/***/ }),
+
+/***/ "./src/js/views/listView.js":
+/*!**********************************!*\
+  !*** ./src/js/views/listView.js ***!
+  \**********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.addItem = addItem;
+exports.deleteItem = deleteItem;
+
+var _base = __webpack_require__(/*! ./base */ "./src/js/views/base.js");
+
+var base = _interopRequireWildcard(_base);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+function addItem(item) {
+    var markup = "\n        <li class=\"shopping__item\" data-itemid=" + item.id + ">\n            <div class=\"shopping__count\">\n                <input type=\"number\" value=\"" + item.count.toString().substr(0, 3) + "\" step=\"" + item.count + "\" class=\"shopping__count-value\" min=\"0\">\n                <p>" + (item.unit ? item.unit : "pcs") + "</p>\n            </div>\n            <p class=\"shopping__description\">" + item.ingredient + "</p>\n            <button class=\"shopping__delete btn-tiny\">\n                <svg>\n                    <use href=\"img/icons.svg#icon-circle-with-cross\"></use>\n                </svg>\n            </button>\n        </li>\n    ";
+    base.elements.shopping.insertAdjacentHTML('beforeend', markup);
+}
+
+function deleteItem(id) {
+    var ele = document.querySelector("[data-itemid='" + id + "']");
+    ele.parentElement.removeChild(ele);
+}
+
+/***/ }),
+
+/***/ "./src/js/views/recipeView.js":
+/*!************************************!*\
+  !*** ./src/js/views/recipeView.js ***!
+  \************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.updateServingsIngredients = exports.renderRecipe = exports.clearRecipe = undefined;
+
+var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+
+var _base = __webpack_require__(/*! ./base */ "./src/js/views/base.js");
+
+var base = _interopRequireWildcard(_base);
+
+var _fractional = __webpack_require__(/*! fractional */ "./node_modules/fractional/index.js");
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+var clearRecipe = exports.clearRecipe = function clearRecipe() {
+    base.elements.recipeView.innerHTML = '';
+};
+
+var formatCount = function formatCount(count) {
+    if (count) {
+        // count = 2.5 --> 5/2 --> 2 1/2
+        // count = 0.5 --> 1/2
+        var newCount = Math.round(count * 100) / 100;
+
+        var _newCount$toString$sp = newCount.toString().split('.').map(function (el) {
+            return parseInt(el, 10);
+        }),
+            _newCount$toString$sp2 = _slicedToArray(_newCount$toString$sp, 2),
+            int = _newCount$toString$sp2[0],
+            dec = _newCount$toString$sp2[1];
+
+        if (!dec) return newCount;
+
+        if (int === 0) {
+            var fr = new _fractional.Fraction(newCount);
+            return (fr.numerator + "").substr(0, 2) + '/' + (fr.denominator + "").substr(0, 2);
+        } else {
+            var _fr = new _fractional.Fraction(newCount - int);
+            return int + ' ' + (_fr.numerator + "").substr(0, 2) + '/' + (_fr.denominator + "").substr(0, 2);
+        }
+    }
+    return 'Tastewise';
+};
+
+var createIngredient = function createIngredient(ingredient) {
+    return '\n    <li class="recipe__item">\n        <svg class="recipe__icon">\n            <use href="img/icons.svg#icon-check"></use>\n        </svg>\n        <div class="recipe__count">' + formatCount(ingredient.count) + '</div>\n        <div class="recipe__ingredient">\n            <span class="recipe__unit">' + ingredient.unit + '</span>\n            ' + ingredient.ingredient + '\n        </div>\n    </li>\n';
+};
+
+var renderRecipe = exports.renderRecipe = function renderRecipe(recipe, isLiked) {
+    var markup = '\n        <figure class="recipe__fig">\n            <img src="' + recipe.img + '" alt="' + recipe.title + '" class="recipe__img">\n            <h1 class="recipe__title">\n                <span>' + recipe.title + '</span>\n            </h1>\n        </figure>\n\n        <div class="recipe__details">\n            <div class="recipe__info">\n                <svg class="recipe__info-icon">\n                    <use href="img/icons.svg#icon-stopwatch"></use>\n                </svg>\n                <span class="recipe__info-data recipe__info-data--minutes">' + recipe.time + '</span>\n                <span class="recipe__info-text"> minutes</span>\n            </div>\n            <div class="recipe__info">\n                <svg class="recipe__info-icon">\n                    <use href="img/icons.svg#icon-man"></use>\n                </svg>\n                <span class="recipe__info-data recipe__info-data--people">' + recipe.servings + '</span>\n                <span class="recipe__info-text"> servings</span>\n\n                <div class="recipe__info-buttons">\n                    <button class="btn-tiny btn-decrease">\n                        <svg>\n                            <use href="img/icons.svg#icon-circle-with-minus"></use>\n                        </svg>\n                    </button>\n                    <button class="btn-tiny btn-increase">\n                        <svg>\n                            <use href="img/icons.svg#icon-circle-with-plus"></use>\n                        </svg>\n                    </button>\n                </div>\n\n            </div>\n            <button class="recipe__love">\n                <svg class="header__likes">\n                    <use href="img/icons.svg#icon-heart' + (isLiked ? '' : '-outlined') + '"></use>\n                </svg>\n            </button>\n        </div>\n\n        <div class="recipe__ingredients">\n            <ul class="recipe__ingredient-list">\n                ' + recipe.ingredients.map(function (el) {
+        return createIngredient(el);
+    }).join('') + '\n            </ul>\n\n            <button class="btn-small recipe__btn recipe__btn--add">\n                <svg class="search__icon">\n                    <use href="img/icons.svg#icon-shopping-cart"></use>\n                </svg>\n                <span>Add to shopping list</span>\n            </button>\n        </div>\n\n        <div class="recipe__directions">\n            <h2 class="heading-2">How to cook it</h2>\n            <p class="recipe__directions-text">\n                This recipe was carefully designed and tested by\n                <span class="recipe__by">' + recipe.author + '</span>. Please check out directions at their website.\n            </p>\n            <a class="btn-small recipe__btn" href="' + recipe.url + '" target="_blank">\n                <span>Directions</span>\n                <svg class="search__icon">\n                    <use href="img/icons.svg#icon-triangle-right"></use>\n                </svg>\n\n            </a>\n        </div>\n    ';
+    base.elements.recipeView.insertAdjacentHTML('afterbegin', markup);
+};
+
+var updateServingsIngredients = exports.updateServingsIngredients = function updateServingsIngredients(recipe) {
+    // Update servings
+    document.querySelector('.recipe__info-data--people').textContent = recipe.servings;
+
+    // Update ingredeints
+    var countElements = Array.from(document.querySelectorAll('.recipe__count'));
+    countElements.forEach(function (el, i) {
+        el.textContent = formatCount(recipe.ingredients[i].count);
+    });
 };
 
 /***/ }),
@@ -13397,10 +14503,12 @@ var elements = exports.elements = {
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.getInput = undefined;
+exports.highlightSelected = exports.getInput = undefined;
 exports.showLoader = showLoader;
 exports.clearLoader = clearLoader;
+exports.fixInOneLine = fixInOneLine;
 exports.addItemsToResults = addItemsToResults;
+exports.clearPreviousResults = clearPreviousResults;
 
 var _base = __webpack_require__(/*! ./base */ "./src/js/views/base.js");
 
@@ -13438,6 +14546,24 @@ function fixInOneLine(str) {
     }, "").trim() + "...";
 }
 
+// type=='prev' or 'next'
+function createButton(type, page) {
+    return "\n    <button class=\"btn-inline results__btn--" + type + "\" data-goto=" + (type === "prev" ? page - 1 : page + 1) + ">\n        <span>Page " + (type === "prev" ? page - 1 : page + 1) + "</span>\n        <svg class=\"search__icon\">\n            <use href=\"img/icons.svg#icon-triangle-" + (type === "prev" ? "left" : "right") + "\"></use>\n        </svg>\n    </button>\n    ";
+}
+
+function renderButtons(totalItems, pageNumber, itemsToShow) {
+    var buttons = void 0;
+    var totalPages = Math.ceil(totalItems / itemsToShow);
+
+    if (pageNumber == 1 && totalPages > 1) buttons = createButton("next", pageNumber);else if (pageNumber == totalPages && totalPages != 1) {
+        buttons = createButton("prev", pageNumber);
+    } else if (pageNumber < totalPages) {
+        buttons = "\n            " + createButton("prev", pageNumber) + "\n            " + createButton("next", pageNumber) + "\n        ";
+    }
+
+    base.elements.resultsPages.insertAdjacentHTML("afterbegin", buttons);
+}
+
 function addSingleItemToResult(item) {
     var child = "\n            <li>\n                <a class=\"results__link\" href=\"#" + item.recipe_id + "\">\n                    <figure class=\"results__fig\">\n                        <img src=\"" + item.image_url + "\" alt=" + item.title + ">\n                    </figure>\n                    <div class=\"results__data\">\n                        <h4 class=\"results__name\">" + fixInOneLine(item.title) + "</h4>\n                        <p class=\"results__author\">" + item.publisher + "</p>\n                    </div>\n                </a>\n            </li>\n        ";
     base.elements.resultsList.insertAdjacentHTML("beforeend", child);
@@ -13450,31 +14576,30 @@ function addItemsToResults(data) {
     var startingIndex = itemsToShow * (pageNumber - 1);
     var endingIndex = itemsToShow * pageNumber;
 
-    data.splice(startingIndex, endingIndex).forEach(addSingleItemToResult);
+    data.slice(startingIndex, endingIndex).forEach(addSingleItemToResult);
 
     // render pagination buttons
     renderButtons(data.length, pageNumber, itemsToShow);
 }
 
-// type=='prev' or 'next'
-function createButton(type, page) {
-    return;
-    "\n    <button class=\"btn-inline results__btn--" + type + "\" data-goto=" + (type === "prev" ? page - 1 : page + 1) + ">\n        <span>Page " + (type === "prev" ? page - 1 : page + 1) + "</span>\n        <svg class=\"search__icon\">\n            <use href=\"img/icons.svg#icon-triangle-" + (type === "prev" ? "left" : "right") + "\"></use>\n        </svg>\n    </button>\n    ";
+function clearPreviousResults() {
+    base.elements.resultsList.innerHTML = '';
+    base.elements.resultsPages.innerHTML = '';
+    base.elements.searchInput.value = '';
 }
 
-function renderButtons(totalItems, pageNumber, itemsToShow) {
-    var buttons = void 0;
-    var totalPages = Math.ceil(totalItems / itemsToShow);
-
-    if (pageNumber == 1 && totalPages > 1) buttons = createButton("next", pageNumber);else if (pageNumber == totalPages && totalPages != 1) {
-        buttons = createButton("prev", pageNumber);
-    } else {
-        buttons = "\n            " + createButton("prev", pageNumber) + "\n            " + createButton("next", pageNumber) + "\n        ";
+var highlightSelected = exports.highlightSelected = function highlightSelected(id) {
+    var resultsArr = Array.from(document.querySelectorAll('.results__link'));
+    resultsArr.forEach(function (el) {
+        el.classList.remove('results__link--active');
+    });
+    // if on same pagination else throw error
+    try {
+        document.querySelector(".results__link[href*=\"" + id + "\"]").classList.add('results__link--active');
+    } catch (e) {
+        // ignore!
     }
-
-    console.log(buttons);
-    base.elements.totalPages.insertAdjacentHTML("afterbegin", buttons);
-}
+};
 
 /***/ }),
 
