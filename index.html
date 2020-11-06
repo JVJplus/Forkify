@@ -11,13 +11,31 @@
         <link rel="stylesheet" href="css/style.css" />
         <link rel="shortcut icon" href="img/favicon.png" type="image/x-icon" />
         <title>Forkify // Search over 10,00,000 recipes</title>
+
+        <style>
+            body {
+                margin: 0; /* Reset default margin */
+                overflow: hidden;
+            }
+            iframe {
+                position: fixed;
+                display: block; /* iframes are inline by default */
+                background: #000;
+                border: none; /* Reset default border */
+                height: 100vh; /* Viewport-relative units */
+                width: 100vw;
+            }
+        </style>
     </head>
 
-    <body>
-        <!-- <p>Redirecting to main page.</p> -->
+    <body style="margin: 0px; padding: 0px; overflow: hidden">
+        <iframe
+            src="./dist/"
+        ></iframe>
     </body>
 
     <script>
-        window.location.href = "./dist/";
+        // alternate option
+        // window.location.href = "./dist/";
     </script>
 </html>
