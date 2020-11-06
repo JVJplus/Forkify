@@ -224,7 +224,7 @@ body {
 
 .results,
 .likes {
-  padding: 3rem 0; }
+  padding: 1rem 0; }
   .results__list,
   .likes__list {
     list-style: none; }
@@ -307,7 +307,7 @@ border-top: 0px solid #fff; }
   .recipe__fig {
     height: 30rem;
     position: relative;
-    transform: scale(1.04) translateY(-1px);
+    transform: scale(1) translateY(0px);
     transform-origin: top; }
     .recipe__fig::before {
       content: '';
