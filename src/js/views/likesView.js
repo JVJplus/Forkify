@@ -33,4 +33,27 @@ export const toggleLikeMenu = numLikes => {
     // base.elements.likesMenu.style.visibility = numLikes > 0 ? 'visible' : 'hidden';
     const hrefString ='./img/icons v2.svg#icon-bookmark'+ (numLikes>0 ? '-fill' : '');
     base.elements.bookmarkIcon.setAttribute('href',hrefString);
+    handleEmptyState(numLikes);
 };
+
+function handleEmptyState(numLikes){
+    const ele=`
+        <div class="error">
+            <div>
+            <svg>
+                <use href="./img/icons v2.svg#icon-alert-triangle"></use>
+            </svg>
+            </div>
+            <p>No bookmarks yet. <br> Find a nice recipe and bookmark it ;)</p>
+        </div>
+    `;
+    if(numLikes==0){
+        console.log('done');
+        document.querySelector('.likes__list').insertAdjacentHTML('afterbegin',ele);
+    }
+    else{
+        const domEle=document.querySelector('.likes__list .error');
+        if(domEle)
+            domEle.parentElement.removeChild(domEle);
+    }
+}
