@@ -31,7 +31,7 @@ body {
     min-height: calc(100vh - 2 * 4vw);
 }
 
-.container{
+.container {
     max-width: 120rem;
     margin: 4vw auto;
     background-color: #fff;
@@ -661,17 +661,15 @@ body {
 }
 
 @media only screen and (max-width: 768px) {
-    .container{
+    .container {
         overflow: initial;
         grid-template-columns: auto auto auto;
     }
 
     .results {
-        /* margin: auto; */
     }
 
     .recipe {
-        /* margin-top: 20px; */
     }
 
     .shopping {
