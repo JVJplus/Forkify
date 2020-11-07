@@ -667,6 +667,7 @@ body {
     }
 
     .results {
+        min-width: 26rem;
     }
 
     .recipe {
