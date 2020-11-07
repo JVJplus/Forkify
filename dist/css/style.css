@@ -31,7 +31,7 @@ body {
     min-height: calc(100vh - 2 * 4vw);
 }
 
-.container {
+.container{
     max-width: 120rem;
     margin: 4vw auto;
     background-color: #fff;
@@ -216,6 +216,7 @@ body {
 }
 
 .search {
+    order: 1;
     background-color: #fff;
     border-radius: 10rem;
     display: flex;
@@ -243,6 +244,7 @@ body {
 }
 
 .likes {
+    order: 3;
     position: relative;
     align-self: stretch;
     padding: 0 !important;
@@ -659,20 +661,17 @@ body {
 }
 
 @media only screen and (max-width: 768px) {
-    body {
-        /* display: none; */
-    }
-    
-    main{
-        width: 100vw;
+    .container{
+        overflow: initial;
+        grid-template-columns: auto auto auto;
     }
 
     .results {
-        margin: auto;
+        /* margin: auto; */
     }
 
     .recipe {
-        margin-top: 20px;
+        /* margin-top: 20px; */
     }
 
     .shopping {

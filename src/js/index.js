@@ -73,10 +73,6 @@ async function addRecipe(e) {
         // clear previous
         recipeView.clearRecipe();
 
-        // scroll to recipe in mobile view
-        window.scrollTo(0, base.elements.recipeView.offsetTop);
-        // console.log(base.elements.recipeView.offsetTop);
-
         if (await state.search) {
             searchView.highlightSelected(hash);
         }
