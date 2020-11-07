@@ -656,3 +656,15 @@ body {
     line-height: 1.5;
     font-weight: 600;
 }
+
+
+@media only screen and (max-width: 768px) {
+  .results{
+  }
+
+  .recipe{
+  }
+  
+  .shopping{
+  }
+}
