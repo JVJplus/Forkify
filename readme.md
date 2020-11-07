@@ -1,21 +1,34 @@
-
 # Forkify
 
-Based on the original project by [Jonas Schmedtmann](http://codingheroes.io/)'s [The Complete JavaScript Course](https://www.udemy.com/the-complete-javascript-course) on Udemy
+## Live Demo
+https://jvjplus.github.io/Forkify/
 
---------------------------------------------------------------------
-## __*This app is still a work in progress. Use at your own discretion*__
---------------------------------------------------------------------
+## Technologies
+* HTML5
+* CSS3
+* Vanilla JavaScript
+* Webpack
+* Babel
+* Axios
+* Fractional
+* Uniqid
 
-## About
-This is a cookbook application that contains recipes for multiple different foods within categories. The user will then select the food he/she likes and the recipe view will be shown with much more details. The user will then be able to add the necessary ingredients to shopping cart.
+## General Info
+This app let you search for any recipe and gives you best results from web, you can also predict the quantity of ingredients required based on number of servings. You can also bookmark the favourite recipes. The user will then be able to add the necessary ingredients to shopping cart.
 
-## To Add:
+App was created as part of [Jonas Schmedtmann's JavaScript course on Udemy](https://www.udemy.com/the-complete-javascript-course/learn).
 
-* Add More Features : https://forkify-v2.netlify.app/
-* add hints like : try searching 'pizza, burger, chicken' auto changing animation!
-* change like to bookmark
+
+## Special Features
+* Loading Spinners
+* Pagination
+* Bookmarks
+* Adding Items to cart based on no of servings
+
+## Features That Can Be Added:
+* Make Mobile Friendly
+* Add empty state on respective views.
+* add hints like : try searching 'pizza, burger, chicken' with auto changing animation!
 * make option to add recipe using own api!
 * add delete all list items btn
 * add selective ingredients to list from recipe
-* add another index in homepage

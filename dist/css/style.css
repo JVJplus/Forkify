@@ -193,12 +193,21 @@ body {
   align-self: stretch;
   padding: 0 !important; }
   .likes__field {
+    height: 100%;
+    font-family: inherit;
+    color: inherit;
+    font-size: 1.4rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    background: none;
+    border: none;
     cursor: pointer;
-    padding: 0 4rem;
+    padding: 0 1.5rem;
+    transition: all .3s;
     display: flex;
     align-items: center;
-    height: 100%;
-    transition: all .3s; }
+    margin-right: 2.5rem;
+    }
     .likes__field:hover {
       background-color: #F2EFEE; }
   .likes__panel:hover,
@@ -206,9 +215,11 @@ body {
     visibility: visible;
     opacity: 1; }
   .likes__icon {
-    fill: #F59A83;
-    height: 3.75rem;
-    width: 3.75rem; }
+    height: 2.4rem;
+    width: 2.4rem;
+    fill: #f38e82;
+    margin-right: .7rem;
+    transform: translateY(-1px);}
   .likes__panel {
     position: absolute;
     right: 0;

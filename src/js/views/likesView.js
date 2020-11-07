@@ -25,11 +25,12 @@ export const removeItem = id =>{
 
 
 export const toggleLikeBtn = isLiked => {
-    const iconString = isLiked ? 'icon-heart' : 'icon-heart-outlined';
-    document.querySelector('.recipe__love use').setAttribute('href', `img/icons.svg#${iconString}`);
-    // icons.svg#icon-heart-outlined
+    const iconString ='icon-bookmark'+ (isLiked ? '-fill' : '');
+    document.querySelector('.recipe__love use').setAttribute('href', `img/icons v2.svg#${iconString}`);
 };
 
 export const toggleLikeMenu = numLikes => {
-    base.elements.likesMenu.style.visibility = numLikes > 0 ? 'visible' : 'hidden';
+    // base.elements.likesMenu.style.visibility = numLikes > 0 ? 'visible' : 'hidden';
+    const hrefString ='./img/icons v2.svg#icon-bookmark'+ (numLikes>0 ? '-fill' : '');
+    base.elements.bookmarkIcon.setAttribute('href',hrefString);
 };

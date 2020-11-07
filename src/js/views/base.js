@@ -9,4 +9,5 @@ export const elements={
     shopping:document.querySelector('.shopping__list'),
     likesMenu: document.querySelector('.likes__field'),
     likesList:document.querySelector('.likes__list'),
+    bookmarkIcon:document.querySelector('.likes__icon use')
 };
