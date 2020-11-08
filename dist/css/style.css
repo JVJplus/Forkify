@@ -661,18 +661,49 @@ body {
 }
 
 @media only screen and (max-width: 768px) {
+    .header{
+        padding: 20px 0;
+        flex-direction: column;
+    }
+
+    .header form{
+        width: 90%;
+        display: flex;
+        justify-content: space-between;
+        margin-top: 5%;
+    }   
+
+    .likes{
+        order: 2;
+        margin-top: 4%;
+    }
+
+    .likes__field{
+        float: right;
+        margin-right: 4%;
+    }
+
+    .likes__panel{
+        top: 5rem;
+
+    }
+    
     .container {
-        overflow: initial;
-        grid-template-columns: auto auto auto;
+        /* overflow: initial; */
+        grid-template-rows: auto auto auto;
+        grid-template-columns: auto;
+        grid-template-areas: "head""list" "recipe" "shopping";
     }
 
     .results {
-        min-width: 26rem;
+        width: 100vw;
     }
 
     .recipe {
+        width: 100vw;
     }
 
     .shopping {
+        width: 100vw;
     }
 }
