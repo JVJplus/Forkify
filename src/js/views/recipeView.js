@@ -48,6 +48,7 @@ export const renderRecipe = (recipe, isLiked) => {
         </figure>
 
         <div class="recipe__details">
+            <div class="recipe__info-box">
             <div class="recipe__info">
                 <svg class="recipe__info-icon">
                     <use href="img/icons.svg#icon-stopwatch"></use>
@@ -75,6 +76,7 @@ export const renderRecipe = (recipe, isLiked) => {
                     </button>
                 </div>
 
+            </div>
             </div>
             <button class="recipe__love">
                 <svg class="header__likes">
