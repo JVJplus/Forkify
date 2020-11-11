@@ -727,7 +727,7 @@ body {
   }
 }
 
-@media (max-width: 1000px) {
+@media (max-width: 1080px) {
   html {
     font-size: 56%;
   }
