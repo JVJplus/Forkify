@@ -69,8 +69,13 @@ function renderButtons(totalItems, pageNumber, itemsToShow) {
         `;
     }
 
-    base.elements.resultsPages.insertAdjacentHTML("afterbegin", buttons);
+    const resultsPages = base.elements.resultsPages
+    resultsPages.insertAdjacentHTML("afterbegin", buttons);
+    // scroll Setup
+    const Btns = resultsPages.querySelectorAll('button');
+    Btns.forEach(btn => base.utilities.scrollOnClick(btn, base.elements.results));
 }
+
 
 function addSingleItemToResult(item) {
     const child = `
@@ -88,8 +93,15 @@ function addSingleItemToResult(item) {
                 </a>
             </li>
         `;
-    base.elements.resultsList.insertAdjacentHTML("beforeend", child);
+
+    const resultsList = base.elements.resultsList;
+    resultsList.insertAdjacentHTML("beforeend", child);
+    // scroll setup
+    const lastChild = resultsList.children[resultsList.children.length - 1];
+    base.utilities.scrollOnClick(lastChild, base.elements.recipeView);
 }
+
+
 
 export function addItemsToResults(data, pageNumber = 1, itemsToShow = 10) {
     const startingIndex = itemsToShow * (pageNumber - 1);
