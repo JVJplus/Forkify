@@ -113,7 +113,11 @@ export const renderRecipe = (recipe, isLiked) => {
             </a>
         </div>
     `;
+    
     base.elements.recipeView.insertAdjacentHTML('afterbegin', markup);
+    // scroll setup
+    const shoppingListBtn = document.querySelector('.recipe__btn');
+    base.utilities.scrollOnClick(shoppingListBtn,  base.elements.shoppingList);
 };
 
 export const updateServingsIngredients = recipe => {
