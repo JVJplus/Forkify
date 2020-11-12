@@ -19,8 +19,8 @@
                 <a href="/">
                     <img src="img/logo.png" alt="Logo" class="header__logo" />
                 </a>
-                
-                <div class="likes">
+
+                <div class="likes no-select">
                     <div class="likes__field">
                         <svg class="likes__icon">
                             <use href="./img/icons v2.svg#icon-bookmark"></use>
@@ -51,7 +51,7 @@
                         class="search__field"
                         placeholder="Search over 10,00,000 recipes..."
                     />
-                    <button class="btn search__btn">
+                    <button class="btn search__btn no-select">
                         <svg class="search__icon">
                             <use
                                 href="img/icons.svg#icon-magnifying-glass"
@@ -62,9 +62,9 @@
                 </form>
             </header>
 
-                <div class="results">
-                    <ul class="results__list">
-                        <!--
+            <div class="results">
+                <ul class="results__list">
+                    <!--
                 <li>
                     <a class="results__link results__link--active" href="#23456">
                         <figure class="results__fig">
@@ -183,11 +183,10 @@
                         </div>
                     </a>
                 </li>
-                -->
-                    </ul>
+                --></ul>
 
-                    <div class="results__pages">
-                        <!--
+                <div class="results__pages no-select">
+                    <!--
                 <button class="btn-inline results__btn--prev">
                     <svg class="search__icon">
                         <use href="img/icons.svg#icon-triangle-left"></use>
@@ -200,41 +199,40 @@
                         <use href="img/icons.svg#icon-triangle-right"></use>
                     </svg>
                 </button>
-                -->
+                --></div>
+            </div>
+
+            <div class="recipe">
+                <div class="message">
+                    <div>
+                        <svg>
+                            <use href="img/smiley.svg#icon-smile"></use>
+                        </svg>
                     </div>
+                    <p>
+                        Start by searching for a recipe or an ingredient. Have
+                        fun!
+                        <br />
+                        <br />
+                        Most searched for:
+                        <br />
+                        &bull; Cake <br />
+                        &bull; Chocolate <br />
+                        &bull; Ice Cream <br />
+                        &bull; Pie <br />
+                        &bull; Pizza <br />
+                        &bull; Chicken <br />
+                        <br />
+                        See all available search queries:
+                        <a
+                            target="_blank"
+                            href="https://forkify-api.herokuapp.com/phrases.html"
+                            >here</a
+                        >
+                    </p>
                 </div>
 
-                <div class="recipe">
-                    <div class="message">
-                        <div>
-                            <svg>
-                                <use href="img/smiley.svg#icon-smile"></use>
-                            </svg>
-                        </div>
-                        <p>
-                            Start by searching for a recipe or an ingredient.
-                            Have fun!
-                            <br />
-                            <br />
-                            Most searched for:
-                            <br />
-                            &bull; Cake <br />
-                            &bull; Chocolate <br />
-                            &bull; Ice Cream <br />
-                            &bull; Pie <br />
-                            &bull; Pizza <br />
-                            &bull; Chicken <br />
-                            <br />
-                            See all available search queries:
-                            <a
-                                target="_blank"
-                                href="https://forkify-api.herokuapp.com/phrases.html"
-                                >here</a
-                            >
-                        </p>
-                    </div>
-
-                    <!--
+                <!--
             <figure class="recipe__fig">
                 <img src="img/test-1.jpg" alt="Tomato" class="recipe__img">
                 <h1 class="recipe__title">
@@ -371,14 +369,13 @@
 
                 </a>
             </div>
-            -->
-                </div>
+            --></div>
 
-                <div class="shopping">
-                    <h2 class="heading-2">My Shopping List</h2>
+            <div class="shopping">
+                <h2 class="heading-2">My Shopping List</h2>
 
-                    <ul class="shopping__list">
-                        <!--
+                <ul class="shopping__list">
+                    <!--
                 <li class="shopping__item">
                     <div class="shopping__count">
                         <input type="number" value="500" step="100">
@@ -457,20 +454,18 @@
                         </svg>
                     </button>
                 </li>
-                -->
-                    </ul>
+                --></ul>
 
-                    <div class="copyright">
-                        &copy; by Jayprakash. Powered by
-                        <a
-                            href="https://forkify-api.herokuapp.com/"
-                            target="_blank"
-                            class="link"
-                            >Forkify API</a
-                        >.
-                    </div>
+                <div class="copyright">
+                    &copy; by Jayprakash. Powered by
+                    <a
+                        href="https://forkify-api.herokuapp.com/"
+                        target="_blank"
+                        class="link"
+                        >Forkify API</a
+                    >.
                 </div>
-                
+            </div>
         </div>
     <script type="text/javascript" src="js/bundle.js"></script></body>
 </html>

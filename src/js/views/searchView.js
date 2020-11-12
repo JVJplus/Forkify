@@ -1,4 +1,4 @@
-import * as base from "./base";
+import * as base from './base';
 
 export const getInput = () => base.elements.searchInput.value;
 
@@ -10,11 +10,11 @@ export function showLoader(parent) {
             </svg>
         </div>
     `;
-    parent.insertAdjacentHTML("afterbegin", spinner);
+    parent.insertAdjacentHTML('afterbegin', spinner);
 }
 
 export function clearLoader() {
-    const spinner = document.querySelector(".loader");
+    const spinner = document.querySelector('.loader');
     // if its present in dom!
     if (spinner) {
         spinner.parentElement.removeChild(spinner);
@@ -26,32 +26,31 @@ export function fixInOneLine(str, maxChar = 17) {
 
     return (
         str
-            .split(" ")
+            .split(' ')
             .reduce((acc, curr) => {
                 if (acc.length + curr.length <= 17) {
-                    acc += curr + " ";
+                    acc += curr + ' ';
                 }
                 return acc;
-            }, "")
-            .trim() + "..."
+            }, '')
+            .trim() + '...'
     );
 }
 
 // type=='prev' or 'next'
 function createButton(type, page) {
-    return (
-    `
-    <button class="btn-inline results__btn--${type}" data-goto=${
-        type === "prev" ? page - 1 : page + 1
+    return `
+    <button class="btn-inline no-select results__btn--${type}" data-goto=${
+        type === 'prev' ? page - 1 : page + 1
     }>
-        <span>Page ${type === "prev" ? page - 1 : page + 1}</span>
+        <span>Page ${type === 'prev' ? page - 1 : page + 1}</span>
         <svg class="search__icon">
             <use href="img/icons.svg#icon-triangle-${
-                type === "prev" ? "left" : "right"
+                type === 'prev' ? 'left' : 'right'
             }"></use>
         </svg>
     </button>
-    `);
+    `;
 }
 
 function renderButtons(totalItems, pageNumber, itemsToShow) {
@@ -59,23 +58,24 @@ function renderButtons(totalItems, pageNumber, itemsToShow) {
     const totalPages = Math.ceil(totalItems / itemsToShow);
 
     if (pageNumber == 1 && totalPages > 1)
-        buttons = createButton("next", pageNumber);
+        buttons = createButton('next', pageNumber);
     else if (pageNumber == totalPages && totalPages != 1) {
-        buttons = createButton("prev", pageNumber);
-    } else if(pageNumber<totalPages) {
+        buttons = createButton('prev', pageNumber);
+    } else if (pageNumber < totalPages) {
         buttons = `
-            ${createButton("prev", pageNumber)}
-            ${createButton("next", pageNumber)}
+            ${createButton('prev', pageNumber)}
+            ${createButton('next', pageNumber)}
         `;
     }
 
-    const resultsPages = base.elements.resultsPages
-    resultsPages.insertAdjacentHTML("afterbegin", buttons);
+    const resultsPages = base.elements.resultsPages;
+    resultsPages.insertAdjacentHTML('afterbegin', buttons);
     // scroll Setup
     const Btns = resultsPages.querySelectorAll('button');
-    Btns.forEach(btn => base.utilities.scrollOnClick(btn, base.elements.results));
+    Btns.forEach(btn =>
+        base.utilities.scrollOnClick(btn, base.elements.results)
+    );
 }
-
 
 function addSingleItemToResult(item) {
     const child = `
@@ -95,13 +95,11 @@ function addSingleItemToResult(item) {
         `;
 
     const resultsList = base.elements.resultsList;
-    resultsList.insertAdjacentHTML("beforeend", child);
+    resultsList.insertAdjacentHTML('beforeend', child);
     // scroll setup
     const lastChild = resultsList.children[resultsList.children.length - 1];
     base.utilities.scrollOnClick(lastChild, base.elements.recipeView);
 }
-
-
 
 export function addItemsToResults(data, pageNumber = 1, itemsToShow = 10) {
     const startingIndex = itemsToShow * (pageNumber - 1);
@@ -113,10 +111,10 @@ export function addItemsToResults(data, pageNumber = 1, itemsToShow = 10) {
     renderButtons(data.length, pageNumber, itemsToShow);
 }
 
-export function clearPreviousResults(){
-    base.elements.resultsList.innerHTML='';
-    base.elements.resultsPages.innerHTML='';
-    base.elements.searchInput.value='';
+export function clearPreviousResults() {
+    base.elements.resultsList.innerHTML = '';
+    base.elements.resultsPages.innerHTML = '';
+    base.elements.searchInput.value = '';
 }
 
 export const highlightSelected = id => {
@@ -125,9 +123,11 @@ export const highlightSelected = id => {
         el.classList.remove('results__link--active');
     });
     // if on same pagination else throw error
-    try{
-        document.querySelector(`.results__link[href*="${id}"]`).classList.add('results__link--active');
-    }catch(e){
+    try {
+        document
+            .querySelector(`.results__link[href*="${id}"]`)
+            .classList.add('results__link--active');
+    } catch (e) {
         // ignore!
     }
 };
